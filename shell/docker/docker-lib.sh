@@ -17,9 +17,9 @@ destination_image="local-docker/subfolder/${image_name}"
 destination_registry_user=""
 destination_registry_pass=""
 
-skopeo-login()  {
+skopeo-login() {
     echo "Logging in to: ${REGISTRY} "
-    echo "${REGISTRY_PASS} | "skopeo login -u ${REGISTRY_USER} --password-stdin
+    echo "${REGISTRY_PASS}" | skopeo login -u "${REGISTRY_USER}" --password-stdin
 }
 
 image-copy() {
@@ -50,6 +50,6 @@ image-copy-e2e() {
 
     # Logout from both registries
     echo "Logging out from both registries..."
-    docker logout ${source_registry}
-    docker logout ${destination_registry}
+    docker logout "${source_registry}"
+    docker logout "${destination_registry}"
 }
