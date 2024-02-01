@@ -1,21 +1,20 @@
 #!/bin/bash
-set -eu
+set eu
 SCRIPT_PATH="$(dirname -- "$(readlink -f "${BASH_SOURCE}")")"
+# source "${SCRIPT_PATH}/variable.env"
 IFS=$' \t\r\n'
 
 # Set your source and destination registry information
+: "${image_name?Plz set image_name eg. golang:1.21.5}" #Go: golang:1.21.5, # gitlab: gitlab/gitlab-ce:12.3.5-ce.0
+: "${source_registry:=docker.io}"
+: "${source_image?plz set path to image source_image eg. library/${image_name}}" # Go:'library/${image_name}'
+: "${source_registry_user?plz set source_registry_user}"
+: "${source_registry_pass?plz set source_registry_pass}"
 
-image_name="golang:1.21.5"
-
-source_registry="docker.io"
-source_image="library/${image_name}"
-source_registry_user=""
-source_registry_pass=""
-
-destination_registry=""
-destination_image="local-docker/subfolder/${image_name}"
-destination_registry_user=""
-destination_registry_pass=""
+: "${destination_registry?plz set the destyination registry name destination_registry }"
+: "${destination_image?plz set the destination image path eg. local-docker/subfolder/${image_name}}"
+: "${destination_registry_user? plz set the destination_registry_user}"
+: "${destination_registry_pass?plz set the destination_registry_pass}"
 
 skopeo-login() {
     echo "Logging in to: ${REGISTRY} "
