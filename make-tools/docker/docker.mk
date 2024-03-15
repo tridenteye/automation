@@ -31,7 +31,6 @@ docker-build:
 
 ## Push
 docker-push: $(TAG_TO_PUSH)
-
 $(TAG_TO_PUSH):
 	@$(call assert_set,DOCKER_IMAGE)
 	docker tag $(DOCKER_IMAGE):$(TAG_ARCH) $(DOCKER_IMAGE):$@
@@ -48,8 +47,7 @@ docker-buildx:
 ## Manifest
 # Generate image references for each platform
 IMAGE_REFS := $(foreach platform,$(PLATFORMS),$(DOCKER_IMAGE):$(TAG_MANIFEST)-$(platform))
-docker_manifest: $(TAG_MANIFEST_TO_PUSH)
-
+docker-manifest: $(TAG_MANIFEST_TO_PUSH)
 $(TAG_MANIFEST_TO_PUSH):
 	echo ############### Building image fat manifest: $(DOCKER_IMAGE):$@ ###############
 	docker manifest create $(DOCKER_IMAGE):$@ -a $(IMAGE_REFS)
