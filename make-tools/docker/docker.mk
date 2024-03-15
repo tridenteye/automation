@@ -54,3 +54,11 @@ $(TAG_MANIFEST_TO_PUSH):
 	echo ############### Building image fat manifest: $(DOCKER_IMAGE):$@ ###############
 	docker manifest create $(DOCKER_IMAGE):$@ -a $(IMAGE_REFS)
 	docker manifest push $(DOCKER_IMAGE):$@
+
+## Install the buildkit if not available
+BUILDX_VERSION := v0.13.1
+install-buildx:
+	mkdir -p $(HOME)/.docker/cli-plugins
+	wget https://github.com/docker/buildx/releases/download/$(BUILDX_VERSION)/buildx-$(BUILDX_VERSION).linux-amd64 -O buildx
+	chmod +x buildx
+	mv buildx $(HOME)/.docker/cli-plugins/docker-buildx
