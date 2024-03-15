@@ -1,7 +1,6 @@
-# automation
+# Automation
 
-This repository contains a collection of scripts aimed at automating various tasks. 
-These scripts help streamline common operations such as cloning repositories, creating pull requests, finding and replacing strings, and more.
+This repository contains a collection of scripts aimed at automating various tasks. These scripts help streamline common operations such as cloning repositories, creating pull requests, finding and replacing strings, and more.
 
 ## Available Scripts
 
@@ -10,6 +9,9 @@ These scripts help streamline common operations such as cloning repositories, cr
 
 2. **Image Copy Script (`image_copy.sh`)**:
    - Performs copying of Docker images from a source registry to a destination registry using Skopeo.
+
+3. **Docker Build and Push Makefile (`Makefile`)**:
+   - Facilitates building Docker images, tagging them appropriately, and pushing them to a Docker registry. It also supports creating Docker manifest lists for multi-platform images.
 
 ## Important Notes
 
