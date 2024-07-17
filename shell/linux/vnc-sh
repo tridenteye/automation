@@ -1,0 +1,68 @@
+#!/bin/bash
+
+LOGFILE="/var/log/setup_rhel9.log"
+exec > >(tee -a "$LOGFILE") 2>&1
+
+echo "Script started at $(date)"
+
+# Function to log and exit on error
+function handle_error {
+  echo "Error on line $1"
+  exit 1
+}
+
+trap 'handle_error $LINENO' ERR
+
+# Check if the operating system is RHEL 9
+if grep -q "Red Hat Enterprise Linux release 9" /etc/redhat-release; then
+  echo "Running script on RHEL 9"
+else
+  echo "This script is only for RHEL 9"
+  exit 1
+fi
+
+# Install Desktop environment
+echo "Installing Desktop environment..."
+sudo dnf groupinstall -y "Server with GUI"
+
+# Install and set graphical targets
+echo "Setting graphical targets..."
+sudo systemctl set-default graphical.target
+sudo systemctl start graphical.target
+sudo systemctl status graphical.target
+
+# Enable CodeReady Builder repository for RHEL 9, dynamically using the system's architecture
+echo "Enabling CodeReady Builder repository..."
+sudo subscription-manager repos --enable codeready-builder-for-rhel-9-$(arch)-rpms
+
+# Add EPEL repository
+echo "Adding EPEL repository..."
+sudo dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm
+
+# Install xRDP and necessary packages
+echo "Installing xRDP and necessary packages..."
+sudo dnf install -y xrdp tigervnc-server xterm
+
+# Enable and start xRDP services
+echo "Enabling and starting xRDP services..."
+sudo systemctl enable xrdp
+sudo systemctl enable xrdp-sesman
+sudo systemctl start xrdp
+sudo systemctl status xrdp
+
+# Check if firewall is enabled, and if so, open port 3389 for xRDP
+echo "Checking firewall status..."
+if sudo firewall-cmd --state; then
+  echo "Firewall is active. Adding port 3389..."
+  sudo firewall-cmd --permanent --add-port=3389/tcp
+  sudo firewall-cmd --reload
+else
+  echo "Firewall is not enabled, skipping port addition."
+fi
+
+# Enable GNOME session
+echo "Enabling GNOME session..."
+echo "gnome-session" > ~/.Xclients
+chmod a+x ~/.Xclients
+
+echo "Script completed at $(date)"
