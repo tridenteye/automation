@@ -54,9 +54,27 @@ $(TAG_MANIFEST_TO_PUSH):
 	docker manifest push $(DOCKER_IMAGE):$@
 
 ## Install the buildkit if not available
-BUILDX_VERSION := v0.13.1
 install-buildx:
+	# Fetch the latest buildx version from GitHub API
+
+	BUILDX_VERSION ?= $(shell curl -sSL -H "Accept: application/vnd.github+json" https://api.github.com/repos/docker/buildx/releases/latest | jq -r .name)
+	
+	# Create directory for Docker CLI plugins if it doesn't exist
 	mkdir -p $(HOME)/.docker/cli-plugins
-	wget https://github.com/docker/buildx/releases/download/$(BUILDX_VERSION)/buildx-$(BUILDX_VERSION).linux-amd64 -O buildx
-	chmod +x buildx
-	mv buildx $(HOME)/.docker/cli-plugins/docker-buildx
+	
+	# Check the system architecture
+	case $(uname -m) in
+	x86_64) BUILDX_ARCH="amd64" ;;
+	ppc64le) BUILDX_ARCH="ppcle64" ;;
+	s390x) BUILDX_ARCH="s390x" ;;
+	*) echo "Unsupported architecture: $(uname -m)" && exit 1 ;;
+	esac
+	
+	# Download the appropriate buildx binary based on architecture
+	wget https://github.com/docker/buildx/releases/download/$(BUILDX_VERSION)/buildx-$(BUILDX_VERSION).linux-${BUILDX_ARCH}
+	
+	# Make the downloaded binary executable
+	chmod +x buildx-$(BUILDX_VERSION).linux-$BUILDX_ARCH
+	
+	# Move the buildx binary to the Docker CLI plugins directory
+	mv buildx-$(BUILDX_VERSION).linux-$BUILDX_ARCH $(HOME)/.docker/cli-plugins/docker-buildx
