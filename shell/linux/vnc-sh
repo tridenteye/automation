@@ -41,7 +41,11 @@ sudo dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.
 
 # Install xRDP and necessary packages
 echo "Installing xRDP and necessary packages..."
-sudo dnf install -y xrdp tigervnc-server xterm
+wget https://www.rpmfind.net/linux/epel/9/Everything/x86_64/Packages/x/xrdp-0.10.1-1.el9.x86_64.rpm
+wget https://rpmfind.net/linux/epel/9/Everything/x86_64/Packages/i/imlib2-1.7.4-1.el9.x86_64.rpm
+sudo dnf install -y imlib2-1.7.4-1.el9.x86_64.rpm
+sudo dnf install -y xrdp-0.10.1-1.el9.x86_64.rpm
+sudo dnf install -y tigervnc-server xterm 
 
 # Enable and start xRDP services
 echo "Enabling and starting xRDP services..."
